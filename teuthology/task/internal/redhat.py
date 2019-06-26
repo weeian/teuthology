@@ -97,21 +97,17 @@ def setup_additional_repo(ctx, config):
 
 
 def _enable_rhel_repos(remote):
-    rhel_7_rpms = ['rhel-7-server-rpms',
-                   'rhel-7-server-optional-rpms',
-                   'rhel-7-server-extras-rpms',
-                   'rhel-7-server-ansible-2.6-rpms']
+    rhel_rpms = {'8': ['rhel-8-for-x86_64-appstream-rpms',
+                       'rhel-8-for-x86_64-baseos-rpms',
+                       'ansible-2.8-for-rhel-8-x86_64-rpms'],
+                 '7': ['rhel-7-server-rpms',
+                       'rhel-7-server-optional-rpms',
+                       'rhel-7-server-extras-rpms',
+                       'rhel-7-server-ansible-2.6-rpms']}
 
-    rhel_8_rpms = ['rhel-8-for-x86_64-appstream-rpms',
-                   'rhel-8-for-x86_64-baseos-rpms',
-                   'ansible-2.8-for-rhel-8-x86_64-rpms']
+    rpms = rhel_rpms.get(remote.os.version[0])
 
-    if remote.os.version == '8.0':
-        rpms_to_subscribe = rhel_8_rpms
-    else:
-        rpms_to_subscribe = rhel_7_rpms
-
-    for repo in rpms_to_subscribe:
+    for repo in rpms:
         remote.run(args=['sudo', 'subscription-manager',
                          'repos', '--enable={r}'.format(r=repo)])
 
